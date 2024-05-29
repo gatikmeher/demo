@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.AddressDto;
 import com.example.demo.dto.EmployeeDto;
+import com.example.demo.service.EmployeeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,23 +9,32 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class EmployeeController {
 
-    @RequestMapping("/employees")
-    public ResponseEntity<Object> getEmployee() {
-        EmployeeDto employeeDto = new EmployeeDto();
-        employeeDto.setName("John Doe");
-        employeeDto.setDepartment("IT");
-        employeeDto.setDesignation("Software Engineer");
+    EmployeeService employeeServiceSetter = new EmployeeService();
 
-        AddressDto addressDto = new AddressDto();
-        addressDto.setAddressType('P');
-        addressDto.setStreet("1234 Main St");
-        addressDto.setCity("Springfield");
-        addressDto.setState("IL");
-        addressDto.setCountry("USA");
+    EmployeeService employeeServiceConstructor = new EmployeeService();
 
-        employeeDto.setAddress(addressDto);
-
-        return ResponseEntity.ok(employeeDto);
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeServiceConstructor = employeeService;
     }
 
+    @RequestMapping("/employees")
+    public ResponseEntity<Object> getEmployee() {
+
+        EmployeeService employeeServiceNormal = new EmployeeService();
+
+        System.out.println("Normal EMP Service: " + employeeServiceNormal.hashCode());
+        EmployeeDto employeeDto3 = employeeServiceNormal.getAllEmployees();
+
+        System.out.println("Setter EMP Service: " + employeeServiceSetter.hashCode());
+        EmployeeDto employeeDto1 = employeeServiceSetter.getAllEmployees();
+
+        System.out.println("Constructor EMP Service: " + employeeServiceConstructor.hashCode());
+        EmployeeDto employeeDto2 = employeeServiceConstructor.getAllEmployees();
+
+        return ResponseEntity.ok(employeeDto2);
+    }
+
+    public void setEmployeeService(EmployeeService employeeService) {
+        this.employeeServiceSetter = employeeService;
+    }
 }

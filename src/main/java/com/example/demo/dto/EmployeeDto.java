@@ -1,19 +1,21 @@
 package com.example.demo.dto;
 
+import java.util.List;
+
 public class EmployeeDto {
 
     private String name;
     private String department;
     private String designation;
 
-    private AddressDto address;
+    private List<AddressDto> addresses;
 
-    public AddressDto getAddress() {
-        return address;
+    public List<AddressDto> getAddresses() {
+        return addresses;
     }
 
-    public void setAddress(AddressDto address) {
-        this.address = address;
+    public void setAddresses(List<AddressDto> addresses) {
+        this.addresses = addresses;
     }
 
     public String getName() {
