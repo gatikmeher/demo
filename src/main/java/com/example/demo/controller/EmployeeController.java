@@ -9,32 +9,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class EmployeeController {
 
+    EmployeeService employeeServiceConstructor = new EmployeeService();
     EmployeeService employeeServiceSetter = new EmployeeService();
 
-    EmployeeService employeeServiceConstructor = new EmployeeService();
 
     public EmployeeController(EmployeeService employeeService) {
         this.employeeServiceConstructor = employeeService;
     }
 
-    @RequestMapping("/employees")
-    public ResponseEntity<Object> getEmployee() {
-
-        EmployeeService employeeServiceNormal = new EmployeeService();
-
-        System.out.println("Normal EMP Service: " + employeeServiceNormal.hashCode());
-        EmployeeDto employeeDto3 = employeeServiceNormal.getAllEmployees();
-
-        System.out.println("Setter EMP Service: " + employeeServiceSetter.hashCode());
-        EmployeeDto employeeDto1 = employeeServiceSetter.getAllEmployees();
-
-        System.out.println("Constructor EMP Service: " + employeeServiceConstructor.hashCode());
-        EmployeeDto employeeDto2 = employeeServiceConstructor.getAllEmployees();
-
-        return ResponseEntity.ok(employeeDto2);
+    @RequestMapping("/v1/employees/constructor")
+    public ResponseEntity<Object> getEmployeeFromMySqlC() {
+        EmployeeDto employeeDto = employeeServiceConstructor.getAllEmployees();
+        System.out.println("Employee Service: " + employeeServiceConstructor.hashCode());
+        return ResponseEntity.ok(employeeDto);
     }
 
-    public void setEmployeeService(EmployeeService employeeService) {
-        this.employeeServiceSetter = employeeService;
+    @RequestMapping("/v1/employees/setter")
+    public ResponseEntity<Object> getEmployeeFromMySqlS() {
+        EmployeeDto employeeDto = employeeServiceSetter.getAllEmployees();
+        System.out.println("Employee Service: " + employeeServiceSetter.hashCode());
+        return ResponseEntity.ok(employeeDto);
     }
 }
