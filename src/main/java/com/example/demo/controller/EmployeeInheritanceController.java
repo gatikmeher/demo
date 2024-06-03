@@ -7,11 +7,42 @@
 //import org.springframework.web.bind.annotation.RestController;
 //
 //@RestController
+<<<<<<< HEAD
 //public class EmployeeInheritanceController {
 //
 //
 //
 //    public void setEmployeeServiceMySQL(EmployeeService employeeService) {
+=======
+//public class EmployeeController {
+//
+//    EmployeeService employeeServiceSetter = new EmployeeService();
+//
+//    EmployeeService employeeServiceConstructor = new EmployeeService();
+//
+//    public EmployeeController(EmployeeService employeeService) {
+//        this.employeeServiceConstructor = employeeService;
+//    }
+//
+//    @RequestMapping("/employees")
+//    public ResponseEntity<Object> getEmployee() {
+//
+//        EmployeeService employeeServiceNormal = new EmployeeService();
+//
+//        System.out.println("Normal EMP Service: " + employeeServiceNormal.hashCode());
+//        EmployeeDto employeeDto3 = employeeServiceNormal.getAllEmployees();
+//
+//        System.out.println("Setter EMP Service: " + employeeServiceSetter.hashCode());
+//        EmployeeDto employeeDto1 = employeeServiceSetter.getAllEmployees();
+//
+//        System.out.println("Constructor EMP Service: " + employeeServiceConstructor.hashCode());
+//        EmployeeDto employeeDto2 = employeeServiceConstructor.getAllEmployees();
+//
+//        return ResponseEntity.ok(employeeDto2);
+//    }
+//
+//    public void setEmployeeService(EmployeeService employeeService) {
+>>>>>>> 24453afa63e6293dbb1c22166e2d627c365834a5
 //        this.employeeServiceSetter = employeeService;
 //    }
 //}
