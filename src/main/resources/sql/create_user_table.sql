@@ -11,3 +11,9 @@ CREATE TABLE `demo-app`.`users` (
   `updated_at` DATETIME NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE);
+
+  ALTER TABLE `demo-class`.`users`
+  DROP COLUMN `username`,
+  DROP INDEX `username_UNIQUE` ;
+  ;
+

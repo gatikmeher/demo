@@ -29,6 +29,13 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
+    @RequestMapping(value = "/v1/users/{id}", method = RequestMethod.PATCH)
+    public ResponseEntity<Object> updatePartialUser(@PathVariable("id") Integer id, @RequestBody UserDto userDto) {
+        userDto.setId(id);
+        UserDto userDtoReturn = userService.updatePartialUser(userDto);
+        return ResponseEntity.ok(userDto);
+    }
+
     @RequestMapping(value = "/v1/users", method = RequestMethod.GET)
     public ResponseEntity<Object> getAllUsers() {
         List<UserDto> userDtoList = userService.getAllUsers();
