@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package com.example.demo.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,13 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
-
+public class UserResponseDto {
     private Integer id;
     private String username;
-    private String password;
     private String firstName;
-    private String lastName;
-    private String mobile;
-    private String email;
 }

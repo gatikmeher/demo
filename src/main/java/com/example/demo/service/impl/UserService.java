@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.dto.UserDto;
+import com.example.demo.dto.request.UserRequestDto;
+import com.example.demo.dto.response.UserResponseDto;
 import com.example.demo.mysql.model.User;
 import com.example.demo.mysql.model.UserCredential;
 import com.example.demo.repository.UserCredentailsRepository;
@@ -12,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,67 +29,67 @@ public class UserService implements IUserService {
     UserCredentailsRepository userCredentialRepository;
 
     @Override
-    public UserDto getUserById(Integer id) {
+    public UserRequestDto getUserById(Integer id) {
         Optional<User> userModel = userRepository.findById(id);
-        UserDto userDto = new UserDto();
+        UserRequestDto userRequestDto = new UserRequestDto();
         if (userModel.isPresent()) {
-            userDto = convertUserModelToUserDto(userModel.get());
+            userRequestDto = convertUserModelToUserDto(userModel.get());
         }
-        return userDto;
+        return userRequestDto;
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
+    public List<UserRequestDto> getAllUsers() {
 
         List<User> userList = (List<User>) userRepository.findAll();
-        List<UserDto> userDtoList = new ArrayList<>();
+        List<UserRequestDto> userRequestDtoList = new ArrayList<>();
         for(User user : userList){
-            UserDto userDto = convertUserModelToUserDto(user);
-            userDtoList.add(userDto);
+            UserRequestDto userRequestDto = convertUserModelToUserDto(user);
+            userRequestDtoList.add(userRequestDto);
         }
-        return userDtoList;
+        return userRequestDtoList;
     }
 
     @Override
-    public UserDto updateUser(UserDto userDto) {
-        Optional<User> userModelOptional = userRepository.findById(userDto.getId());
+    public UserRequestDto updateUser(UserRequestDto userRequestDto) {
+        Optional<User> userModelOptional = userRepository.findById(userRequestDto.getId());
         if(userModelOptional.isEmpty()) {
-            System.out.println("User data with id: " + userDto.getId() + " not found");
+            System.out.println("User data with id: " + userRequestDto.getId() + " not found");
         } else {
-            User user = convertUserDtoToUserModel(userDto, userModelOptional.get());
-            user.setId(userDto.getId());
+            User user = convertUserDtoToUserModel(userRequestDto, userModelOptional.get());
+            user.setId(userRequestDto.getId());
             user = userRepository.save(user);
             return convertUserModelToUserDto(user);
         }
-        return userDto;
+        return userRequestDto;
     }
 
     @Override
-    public UserDto updatePartialUser(UserDto userDto) {
-        Optional<User> userModelOptional = userRepository.findById(userDto.getId());
+    public UserRequestDto updatePartialUser(UserRequestDto userRequestDto) {
+        Optional<User> userModelOptional = userRepository.findById(userRequestDto.getId());
         if(userModelOptional.isEmpty()) {
-            System.out.println("User data with id: " + userDto.getId() + " not found");
+            System.out.println("User data with id: " + userRequestDto.getId() + " not found");
         } else {
             User user = userModelOptional.get();
-            user.setFirstName(userDto.getFirstName() != null && !userDto.getFirstName().equals(user.getFirstName()) ? userDto.getFirstName() : user.getFirstName());
-            user.setLastName(userDto.getLastName() != null && !userDto.getLastName().equals(user.getLastName()) ? userDto.getLastName() : user.getLastName());
-            user.setEmail(userDto.getEmail() != null && !userDto.getEmail().equals(user.getEmail()) ? userDto.getEmail() : user.getEmail());
-            user.setMobile(userDto.getMobile() != null && !userDto.getMobile().equals(user.getMobile()) ? userDto.getMobile() : user.getMobile());
+            user.setFirstName(userRequestDto.getFirstName() != null && !userRequestDto.getFirstName().equals(user.getFirstName()) ? userRequestDto.getFirstName() : user.getFirstName());
+            user.setLastName(userRequestDto.getLastName() != null && !userRequestDto.getLastName().equals(user.getLastName()) ? userRequestDto.getLastName() : user.getLastName());
+            user.setEmail(userRequestDto.getEmail() != null && !userRequestDto.getEmail().equals(user.getEmail()) ? userRequestDto.getEmail() : user.getEmail());
+            user.setMobile(userRequestDto.getMobile() != null && !userRequestDto.getMobile().equals(user.getMobile()) ? userRequestDto.getMobile() : user.getMobile());
             user.setUpdatedBy(2);
             user.setUpdatedAt(LocalDateTime.now());
             userRepository.save(user);
             return convertUserModelToUserDto(user);
         }
-        return userDto;
+        return userRequestDto;
     }
 
     @Override
     @Transactional
-    public UserDto createUser(UserDto userDto) {
+    public UserResponseDto createUser(UserRequestDto userRequestDto) {
 
         // Below code saves data in users table
         User user = new User();
-        user = convertUserDtoToUserModel(userDto, user);
+        user = convertUserDtoToUserModel(userRequestDto, user);
         user.setCreatedBy(1);
         user.setCreatedAt(LocalDateTime.now());
         user = userRepository.save(user);
@@ -100,9 +99,9 @@ public class UserService implements IUserService {
         String uuid = UUID.randomUUID().toString();
         System.out.println("UUID: " + uuid);
         final String computedPassword = Hashing.sha256()
-                .hashString(userDto.getPassword(), StandardCharsets.UTF_8).toString() + uuid;
+                .hashString(userRequestDto.getPassword(), StandardCharsets.UTF_8).toString() + uuid;
         userCredential.setUserId(user.getId());
-        userCredential.setUsername(userDto.getUsername());
+        userCredential.setUsername(userRequestDto.getUsername());
         userCredential.setPassword(computedPassword);
         userCredential.setPasswordSalt(uuid);
         userCredential.setLoginDateTime(LocalDateTime.now());
@@ -111,26 +110,31 @@ public class UserService implements IUserService {
         userCredential.setUpdatedBy(1);
         userCredential.setUpdatedAt(LocalDateTime.now());
         userCredentialRepository.save(userCredential);
-        return convertUserModelToUserDto(user);
+
+        UserResponseDto userResponseDto = new UserResponseDto();
+        userResponseDto.setId(user.getId());
+        userResponseDto.setFirstName(user.getFirstName());
+        userResponseDto.setUsername(userCredential.getUsername());
+        return userResponseDto;
     }
 
-    private User convertUserDtoToUserModel(UserDto userDto, User user) {
-        user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());
-        user.setMobile(userDto.getMobile());
-        user.setEmail(userDto.getEmail());
+    private User convertUserDtoToUserModel(UserRequestDto userRequestDto, User user) {
+        user.setFirstName(userRequestDto.getFirstName());
+        user.setLastName(userRequestDto.getLastName());
+        user.setMobile(userRequestDto.getMobile());
+        user.setEmail(userRequestDto.getEmail());
         user.setUpdatedBy(1);
         user.setUpdatedAt(LocalDateTime.now());
         return user;
     }
 
-    private UserDto convertUserModelToUserDto(User user) {
-        UserDto userDto = new UserDto();
-        userDto.setId(user.getId());
-        userDto.setFirstName(user.getFirstName());
-        userDto.setLastName(user.getLastName());
-        userDto.setMobile(user.getMobile());
-        userDto.setEmail(user.getEmail());
-        return userDto;
+    private UserRequestDto convertUserModelToUserDto(User user) {
+        UserRequestDto userRequestDto = new UserRequestDto();
+        userRequestDto.setId(user.getId());
+        userRequestDto.setFirstName(user.getFirstName());
+        userRequestDto.setLastName(user.getLastName());
+        userRequestDto.setMobile(user.getMobile());
+        userRequestDto.setEmail(user.getEmail());
+        return userRequestDto;
     }
 }

@@ -1,8 +1,10 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.UserDto;
+import com.example.demo.dto.request.UserRequestDto;
+import com.example.demo.dto.response.UserResponseDto;
 import com.example.demo.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,38 +17,38 @@ public class UserController {
     @Autowired
     IUserService userService;
 
-    @RequestMapping(value = "/v1/users/{id}", method = RequestMethod.GET)
+    @GetMapping(path = "/v1/users/{id}")
     public ResponseEntity<Object> getUser(@PathVariable("id") Integer id) {
-        UserDto userDto = userService.getUserById(id);
-        return ResponseEntity.ok(userDto);
+        UserRequestDto userRequestDto = userService.getUserById(id);
+        return ResponseEntity.ok(userRequestDto);
 
     }
 
-    @RequestMapping(value = "/v1/users/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Object> updateUser(@PathVariable("id") Integer id, @RequestBody UserDto userDto) {
-        userDto.setId(id);
-        UserDto userDtoReturn = userService.updateUser(userDto);
-        return ResponseEntity.ok(userDto);
+    @PutMapping(path = "/v1/users/{id}")
+    public ResponseEntity<Object> updateUser(@PathVariable("id") Integer id, @RequestBody UserRequestDto userRequestDto) {
+        userRequestDto.setId(id);
+        UserRequestDto userRequestDtoReturn = userService.updateUser(userRequestDto);
+        return ResponseEntity.ok(userRequestDto);
     }
 
-    @RequestMapping(value = "/v1/users/{id}", method = RequestMethod.PATCH)
-    public ResponseEntity<Object> updatePartialUser(@PathVariable("id") Integer id, @RequestBody UserDto userDto) {
-        userDto.setId(id);
-        UserDto userDtoReturn = userService.updatePartialUser(userDto);
-        return ResponseEntity.ok(userDto);
+    @PatchMapping(path = "/v1/users/{id}")
+    public ResponseEntity<Object> updatePartialUser(@PathVariable("id") Integer id, @RequestBody UserRequestDto userRequestDto) {
+        userRequestDto.setId(id);
+        UserRequestDto userRequestDtoReturn = userService.updatePartialUser(userRequestDto);
+        return ResponseEntity.ok(userRequestDto);
     }
 
-    @RequestMapping(value = "/v1/users", method = RequestMethod.GET)
+    @GetMapping(path = "/v1/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getAllUsers() {
-        List<UserDto> userDtoList = userService.getAllUsers();
-        return ResponseEntity.ok(userDtoList);
+        List<UserRequestDto> userRequestDtoList = userService.getAllUsers();
+        return ResponseEntity.ok(userRequestDtoList);
 
     }
 
-    @RequestMapping(value = "/v1/users", method = RequestMethod.POST)
-    public ResponseEntity<Object> createUser(@RequestBody UserDto userDto) {
-        UserDto userDtoReturn = userService.createUser(userDto);
-        return ResponseEntity.ok(userDtoReturn);
+    @PostMapping(path = "/v1/users")
+    public ResponseEntity<Object> createUser(@RequestBody UserRequestDto userRequestDto) {
+        UserResponseDto userResponseDto = userService.createUser(userRequestDto);
+        return ResponseEntity.ok(userResponseDto);
     }
 }
 
