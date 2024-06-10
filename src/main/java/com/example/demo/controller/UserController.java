@@ -3,11 +3,13 @@ package com.example.demo.controller;
 import com.example.demo.dto.request.UserRequestDto;
 import com.example.demo.dto.response.UserResponseDto;
 import com.example.demo.service.IUserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -46,9 +48,10 @@ public class UserController {
     }
 
     @PostMapping(path = "/v1/users")
-    public ResponseEntity<Object> createUser(@RequestBody UserRequestDto userRequestDto) {
+    public ResponseEntity<Object> createUser(@Valid @RequestBody UserRequestDto userRequestDto) {
         UserResponseDto userResponseDto = userService.createUser(userRequestDto);
-        return ResponseEntity.ok(userResponseDto);
+        return ResponseEntity.created(URI.create("/v1/users/" + userResponseDto.getId())).body(userResponseDto);
     }
+
 }
 
