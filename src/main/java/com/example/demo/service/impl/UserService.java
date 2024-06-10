@@ -119,12 +119,15 @@ public class UserService implements IUserService {
     }
 
     private User convertUserDtoToUserModel(UserRequestDto userRequestDto, User user) {
-        user.setFirstName(userRequestDto.getFirstName());
-        user.setLastName(userRequestDto.getLastName());
-        user.setMobile(userRequestDto.getMobile());
-        user.setEmail(userRequestDto.getEmail());
-        user.setUpdatedBy(1);
-        user.setUpdatedAt(LocalDateTime.now());
+
+        user = User.builder()
+                .firstName(userRequestDto.getFirstName())
+                .lastName(user.getLastName())
+                .mobile(userRequestDto.getMobile())
+                .email(userRequestDto.getEmail())
+                .updatedAt(LocalDateTime.now())
+                .updatedBy(1)
+                .build();
         return user;
     }
 
