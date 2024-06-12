@@ -1,7 +1,8 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.request.UserRequestDto;
-import com.example.demo.dto.response.UserResponseDto;
+import com.example.demo.dto.response.UserGetResponseDto;
+import com.example.demo.dto.response.UserPostResponseDto;
 import com.example.demo.mysql.model.User;
 import com.example.demo.mysql.model.UserCredential;
 import com.example.demo.repository.UserCredentailsRepository;
@@ -39,21 +40,21 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<UserRequestDto> getAllUsers() {
+    public List<UserGetResponseDto> getAllUsers() {
 
         List<User> userList = (List<User>) userRepository.findAll();
-        List<UserRequestDto> userRequestDtoList = new ArrayList<>();
-        for(User user : userList){
-            UserRequestDto userRequestDto = convertUserModelToUserDto(user);
-            userRequestDtoList.add(userRequestDto);
+        List<UserGetResponseDto> userGetResponseDtoList = new ArrayList<>();
+        for (User user : userList) {
+            UserGetResponseDto userGetResponseDto = convertUserModelToUserGetResponseDto(user);
+            userGetResponseDtoList.add(userGetResponseDto);
         }
-        return userRequestDtoList;
+        return userGetResponseDtoList;
     }
 
     @Override
     public UserRequestDto updateUser(UserRequestDto userRequestDto) {
         Optional<User> userModelOptional = userRepository.findById(userRequestDto.getId());
-        if(userModelOptional.isEmpty()) {
+        if (userModelOptional.isEmpty()) {
             System.out.println("User data with id: " + userRequestDto.getId() + " not found");
         } else {
             User user = convertUserDtoToUserModel(userRequestDto, userModelOptional.get());
@@ -67,7 +68,7 @@ public class UserService implements IUserService {
     @Override
     public UserRequestDto updatePartialUser(UserRequestDto userRequestDto) {
         Optional<User> userModelOptional = userRepository.findById(userRequestDto.getId());
-        if(userModelOptional.isEmpty()) {
+        if (userModelOptional.isEmpty()) {
             System.out.println("User data with id: " + userRequestDto.getId() + " not found");
         } else {
             User user = userModelOptional.get();
@@ -85,7 +86,7 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public UserResponseDto createUser(UserRequestDto userRequestDto) {
+    public UserPostResponseDto createUser(UserRequestDto userRequestDto) {
 
         // Below code saves data in users table
         User user = new User();
@@ -111,11 +112,11 @@ public class UserService implements IUserService {
         userCredential.setUpdatedAt(LocalDateTime.now());
         userCredentialRepository.save(userCredential);
 
-        UserResponseDto userResponseDto = new UserResponseDto();
-        userResponseDto.setId(user.getId());
-        userResponseDto.setFirstName(user.getFirstName());
-        userResponseDto.setUsername(userCredential.getUsername());
-        return userResponseDto;
+        UserPostResponseDto userPostResponseDto = new UserPostResponseDto();
+        userPostResponseDto.setId(user.getId());
+        userPostResponseDto.setFirstName(user.getFirstName());
+        userPostResponseDto.setUsername(userCredential.getUsername());
+        return userPostResponseDto;
     }
 
     private User convertUserDtoToUserModel(UserRequestDto userRequestDto, User user) {
@@ -129,6 +130,16 @@ public class UserService implements IUserService {
                 .updatedBy(1)
                 .build();
         return user;
+    }
+
+    private UserGetResponseDto convertUserModelToUserGetResponseDto(User user) {
+        UserGetResponseDto userGetResponseDto = new UserGetResponseDto();
+        userGetResponseDto.setId(user.getId());
+        userGetResponseDto.setFirstName(user.getFirstName());
+        userGetResponseDto.setLastName(user.getLastName());
+        userGetResponseDto.setMobile(user.getMobile());
+        userGetResponseDto.setEmail(user.getEmail());
+        return userGetResponseDto;
     }
 
     private UserRequestDto convertUserModelToUserDto(User user) {

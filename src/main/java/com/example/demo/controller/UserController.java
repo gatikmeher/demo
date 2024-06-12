@@ -2,13 +2,13 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.request.UserRequestDto;
 import com.example.demo.dto.response.ErrorResponseDto;
-import com.example.demo.dto.response.UserResponseDto;
+import com.example.demo.dto.response.UserGetResponseDto;
+import com.example.demo.dto.response.UserPostResponseDto;
 import com.example.demo.service.IUserService;
 import com.example.demo.validator.UserValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,8 +49,8 @@ public class UserController {
 
     @GetMapping(path = "/v1/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getAllUsers() {
-        List<UserRequestDto> userRequestDtoList = userService.getAllUsers();
-        return ResponseEntity.ok(userRequestDtoList);
+        List<UserGetResponseDto> userGetResponseDtoList = userService.getAllUsers();
+        return ResponseEntity.ok(userGetResponseDtoList);
 
     }
 
@@ -64,8 +64,8 @@ public class UserController {
                     .build();
             return ResponseEntity.badRequest().body(errorResponseDto);
         }
-        UserResponseDto userResponseDto = userService.createUser(userRequestDto);
-        return ResponseEntity.created(URI.create("/v1/users/" + userResponseDto.getId())).body(userResponseDto);
+        UserPostResponseDto userPostResponseDto = userService.createUser(userRequestDto);
+        return ResponseEntity.created(URI.create("/v1/users/" + userPostResponseDto.getId())).body(userPostResponseDto);
     }
 
 }
